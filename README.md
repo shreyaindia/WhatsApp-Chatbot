@@ -73,10 +73,6 @@ http://localhost:8084
 
 ---
 
-## 🎥 Demo
-
-(Add your demo video link here)
-
 ---
 
 ## 👩‍💻 Author
