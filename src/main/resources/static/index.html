@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WhatsApp Chatbot</title>
+    <style>
+        body {
+		    margin: 0;
+		    font-family: Arial, sans-serif;
+		    background: linear-gradient(135deg, #d9fdd3, #f0f2f5);
+		}
+
+        .chat-container {
+            width: 350px;
+            height: 600px;
+            margin: 30px auto;
+            background-color: #efeae2;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Header */
+        .chat-header {
+            background-color: #075e54;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+        }
+
+        /* Chat body */
+		.chat-body {
+		    flex: 1;
+		    padding: 10px;
+		    overflow-y: auto;
+		    background-color: #e5ddd5;
+    		background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+		}
+		
+		
+        /* Messages */
+        .message {
+            max-width: 70%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            clear: both;
+        }
+
+        .user {
+            background-color: #dcf8c6;
+            float: right;
+            text-align: right;
+        }
+
+        .bot {
+            background-color: white;
+            float: left;
+        }
+
+        /* Input area */
+        .chat-footer {
+            display: flex;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+        }
+
+        .chat-footer button {
+            background-color: #075e54;
+            color: white;
+            border: none;
+            margin-left: 10px;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .chat-footer button:hover {
+            background-color: #0b7d6e;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+
+    <!-- Header -->
+    <div class="chat-header">
+        🤖 WhatsApp Chatbot
+    </div>
+
+    <!-- Chat messages -->
+    <div class="chat-body" id="chatBody"></div>
+
+    <!-- Input -->
+    <div class="chat-footer">
+        <input type="text" id="message" placeholder="Type a message..." />
+        <button onclick="sendMessage()">➤</button>
+    </div>
+
+</div>
+
+<script>
+function sendMessage() {
+    let input = document.getElementById("message");
+    let msg = input.value.trim();
+
+    if(msg === "") return;
+
+    let chatBody = document.getElementById("chatBody");
+
+    // User message
+    let userMsg = document.createElement("div");
+    userMsg.className = "message user";
+    userMsg.innerText = msg;
+    chatBody.appendChild(userMsg);
+
+    fetch("/webhook", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: msg})
+    })
+    .then(res => res.text())
+    .then(data => {
+        let botMsg = document.createElement("div");
+        botMsg.className = "message bot";
+        botMsg.innerText = data;
+        chatBody.appendChild(botMsg);
+
+        chatBody.scrollTop = chatBody.scrollHeight;
+    });
+
+    input.value = "";
+}
+
+// Enter key support
+document.getElementById("message").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        sendMessage();
+    }
+});
+</script>
+
+</body>
+</html>
